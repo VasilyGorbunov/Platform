@@ -2,12 +2,9 @@
 {
     public class QueryStringMiddleware
     {
-        private RequestDelegate _next;
+        private RequestDelegate? _next;
 
-        public QueryStringMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        public QueryStringMiddleware() { }
 
         public async Task Invoke(HttpContext context)
         {
@@ -21,7 +18,34 @@
                 await context.Response.WriteAsync("Class middleware \n");
             }
 
-            await _next(context);
+            if(_next != null)
+            {
+                await _next(context);
+            }       
+        }
+    }
+
+    public class LocationMiddleware
+    {
+        private RequestDelegate _next;
+        private MessageOptions _options;
+
+        public LocationMiddleware(RequestDelegate next, MessageOptions options)
+        {
+            _next = next;
+            _options = options;
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            if(context.Request.Path == "/location")
+            {
+                await context.Response.WriteAsync($"{_options.CityName}, {_options.CountryName}");
+            }
+            else
+            {
+                await _next(context);
+            }
         }
     }
 }
