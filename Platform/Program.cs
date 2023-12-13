@@ -2,23 +2,14 @@ using Microsoft.Extensions.Options;
 using Platform;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.Configure<MessageOptions>(options =>
-{
-    options.CityName = "Krasnoyarsk";
-});
-
 var app = builder.Build();
 
-app.UseMiddleware<LocationMiddleware>();
+app.UseMiddleware<Population>();
+app.UseMiddleware<Capital>();
 
-//app.MapGet("/location", async (HttpContext context, IOptions<MessageOptions> msgOpts) =>
-//{
-//    MessageOptions opts = msgOpts.Value;
-//    await context.Response.WriteAsync($"{opts.CityName}, {opts.CountryName}");
-//});
-
-
-app.MapGet("/", () => "Hello World!");
+app.Run(async (context) =>
+{
+    await context.Response.WriteAsync("Terminal Middleware Reached");
+});
 
 app.Run();
